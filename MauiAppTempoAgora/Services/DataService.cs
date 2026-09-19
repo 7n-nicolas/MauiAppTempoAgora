@@ -16,7 +16,7 @@ namespace MauiAppTempoAgora.Services
 
             string chave = "47c2dd44aec92e8b75160975d3a8c30b";
             string url = $"https://api.openweathermap.org/data/2.5/weather?" +
-                $"q={cidade}&units=metric&appid={chave}";
+                $"q={cidade}&units=metric&appid={chave}&lang=pt_br";
 
             using (HttpClient client = new HttpClient())
             {

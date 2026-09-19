@@ -17,37 +17,46 @@ namespace MauiAppTempoAgora
         {
             try
             {
-                if (!string.IsNullOrEmpty(txt_cidade.Text))
+                if (string.IsNullOrEmpty(txt_cidade.Text))
                 {
-                    Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
+                    lbl_res.Text = "Preencha a cidade.";
+                    return;
+                }
 
-                    if (t != null)
-                    {
-                        string dados_previsao = "";
-                        dados_previsao = $"Latitude: {t.lat} \n" +
-                                         $"Longitude: {t.lon}\n" +
-                                         $"Nascer do Sol: {t.sunrise}\n" +
-                                         $"Por do Sol: {t.sunset}\n" +
-                                         $"Temp Máx: {t.temp_max}\n" +
-                                         $"Temp Mín: {t.temp_min}\n";
+                Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
 
-                        lbl_res.Text = dados_previsao;
+                if (t != null)
+                {
+                    string dados_previsao = $"Latitude: {t.lat} \n" +
+                                     $"Longitude: {t.lon}\n" +
+                                     $"Nascer do Sol: {t.sunrise}\n" +
+                                     $"Por do Sol: {t.sunset}\n" +
+                                     $"Temp Máx: {t.temp_max}\n" +
+                                     $"Temp Mín: {t.temp_min}\n" +
+                                     $"Descrição: {t.description}\n" +
+                                     $"Velocidade do Vento: {t.speed}\n" +
+                                     $"Visibilidade: {t.visibility}\n";
 
-
-                    } else
-                    {
-                        lbl_res.Text = "Sem dados de previsão";
-                    }
+                    lbl_res.Text = dados_previsao;
                 }
                 else
-                { 
-                    lbl_res.Text = "Preencha a cidade.";
+                {
+                    lbl_res.Text = "cidade não encontrada.";
                 }
-
-
-            } catch(Exception ex)
+            }
+            
+            catch (HttpRequestException)
             {
+                // erros de rede
+                await DisplayAlert("Erro de Conexão", "Verifique sua internet.", "OK");
+                lbl_res.Text = "Falha na conexão.";
+
+            }
+            catch (Exception ex)
+            {
+                // Qualquer outro erro inesperado
                 await DisplayAlert("Erro", ex.Message, "OK");
+                lbl_res.Text = "Ocorreu um erro.";
             }
         }
     }
